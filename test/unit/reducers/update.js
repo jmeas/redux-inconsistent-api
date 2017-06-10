@@ -1,19 +1,18 @@
-import simpleResource, {xhrStatuses} from '../../../src';
+import {resourceReducer, requestStatuses} from '../../../src';
 
 describe('reducers: update', function() {
-  it('should handle `UPDATE_HELLO`', () => {
-    const result = simpleResource('hello', {
-      initialState: {
-        resources: [
-          {id: 1},
-          {id: 3},
-          {id: 4},
-        ]
-      }
+  it('should handle `UPDATE_RESOURCE`', () => {
+    const reducer = resourceReducer('hellos', {
+      resources: [
+        {id: 1},
+        {id: 3},
+        {id: 4},
+      ]
     });
 
-    const reduced = result.reducer(result.initialState, {
-      type: 'UPDATE_HELLO',
+    const reduced = reducer(undefined, {
+      type: 'UPDATE_RESOURCE',
+      resourceName: 'hellos',
       id: 3
     });
 
@@ -23,31 +22,31 @@ describe('reducers: update', function() {
         {id: 3},
         {id: 4},
       ],
-      resourceMeta: {
+      meta: {
         3: {
-          updateXhrStatus: xhrStatuses.PENDING
+          updateStatus: requestStatuses.PENDING
         }
       },
-      resourceListMeta: {
-        readXhrStatus: xhrStatuses.NULL,
-        createXhrStatus: xhrStatuses.NULL
+      listMeta: {
+        readStatus: requestStatuses.NULL,
+        createManyStatus: requestStatuses.NULL,
+        createStatus: requestStatuses.NULL
       }
     });
   });
 
-  it('should handle `UPDATE_HELLO_FAIL`', () => {
-    const result = simpleResource('hello', {
-      initialState: {
-        resources: [
-          {id: 1},
-          {id: 3},
-          {id: 4},
-        ]
-      }
+  it('should handle `UPDATE_RESOURCE_FAIL`', () => {
+    const reducer = resourceReducer('hellos', {
+      resources: [
+        {id: 1},
+        {id: 3},
+        {id: 4},
+      ]
     });
 
-    const reduced = result.reducer(result.initialState, {
-      type: 'UPDATE_HELLO_FAIL',
+    const reduced = reducer(undefined, {
+      type: 'UPDATE_RESOURCE_FAIL',
+      resourceName: 'hellos',
       id: 3
     });
 
@@ -57,31 +56,31 @@ describe('reducers: update', function() {
         {id: 3},
         {id: 4},
       ],
-      resourceMeta: {
+      meta: {
         3: {
-          updateXhrStatus: xhrStatuses.FAILED
+          updateStatus: requestStatuses.FAILED
         }
       },
-      resourceListMeta: {
-        readXhrStatus: xhrStatuses.NULL,
-        createXhrStatus: xhrStatuses.NULL
+      listMeta: {
+        readStatus: requestStatuses.NULL,
+        createManyStatus: requestStatuses.NULL,
+        createStatus: requestStatuses.NULL
       }
     });
   });
 
-  it('should handle `UPDATE_HELLO_ABORT`', () => {
-    const result = simpleResource('hello', {
-      initialState: {
-        resources: [
-          {id: 1},
-          {id: 3},
-          {id: 4},
-        ]
-      }
+  it('should handle `UPDATE_RESOURCE_RESET`', () => {
+    const reducer = resourceReducer('hellos', {
+      resources: [
+        {id: 1},
+        {id: 3},
+        {id: 4},
+      ]
     });
 
-    const reduced = result.reducer(result.initialState, {
-      type: 'UPDATE_HELLO_ABORT',
+    const reduced = reducer(undefined, {
+      type: 'UPDATE_RESOURCE_RESET',
+      resourceName: 'hellos',
       id: 3
     });
 
@@ -91,65 +90,31 @@ describe('reducers: update', function() {
         {id: 3},
         {id: 4},
       ],
-      resourceMeta: {
+      meta: {
         3: {
-          updateXhrStatus: xhrStatuses.ABORTED
+          updateStatus: requestStatuses.NULL
         }
       },
-      resourceListMeta: {
-        readXhrStatus: xhrStatuses.NULL,
-        createXhrStatus: xhrStatuses.NULL
+      listMeta: {
+        readStatus: requestStatuses.NULL,
+        createManyStatus: requestStatuses.NULL,
+        createStatus: requestStatuses.NULL
       }
     });
   });
 
-  it('should handle `UPDATE_HELLO_RESET`', () => {
-    const result = simpleResource('hello', {
-      initialState: {
-        resources: [
-          {id: 1},
-          {id: 3},
-          {id: 4},
-        ]
-      }
-    });
-
-    const reduced = result.reducer(result.initialState, {
-      type: 'UPDATE_HELLO_RESET',
-      id: 3
-    });
-
-    expect(reduced).to.deep.equal({
+  it('should handle `UPDATE_RESOURCE_SUCCEED`', () => {
+    const reducer = resourceReducer('hellos', {
       resources: [
         {id: 1},
-        {id: 3},
+        {id: 3, last_name: 'please'},
         {id: 4},
-      ],
-      resourceMeta: {
-        3: {
-          updateXhrStatus: xhrStatuses.NULL
-        }
-      },
-      resourceListMeta: {
-        readXhrStatus: xhrStatuses.NULL,
-        createXhrStatus: xhrStatuses.NULL
-      }
-    });
-  });
-
-  it('should handle `UPDATE_HELLO_SUCCEED`', () => {
-    const result = simpleResource('hello', {
-      initialState: {
-        resources: [
-          {id: 1},
-          {id: 3, last_name: 'please'},
-          {id: 4},
-        ]
-      }
+      ]
     });
 
-    const reduced = result.reducer(result.initialState, {
-      type: 'UPDATE_HELLO_SUCCEED',
+    const reduced = reducer(undefined, {
+      type: 'UPDATE_RESOURCE_SUCCEED',
+      resourceName: 'hellos',
       id: 3,
       resource: {
         id: 3,
@@ -163,70 +128,31 @@ describe('reducers: update', function() {
         {id: 3, name: 'please'},
         {id: 4},
       ],
-      resourceMeta: {
+      meta: {
         3: {
-          updateXhrStatus: xhrStatuses.SUCCEEDED
+          updateStatus: requestStatuses.SUCCEEDED
         }
       },
-      resourceListMeta: {
-        readXhrStatus: xhrStatuses.NULL,
-        createXhrStatus: xhrStatuses.NULL
+      listMeta: {
+        readStatus: requestStatuses.NULL,
+        createManyStatus: requestStatuses.NULL,
+        createStatus: requestStatuses.NULL
       }
     });
   });
 
-  it('should handle `UPDATE_HELLO_SUCCEED` with a custom `idAttribute`', () => {
-    const result = simpleResource('hello', {
-      idAttribute: 'movieId',
-      initialState: {
-        resources: [
-          {movieId: 1},
-          {movieId: 3, last_name: 'please'},
-          {movieId: 4},
-        ]
-      }
-    });
-
-    const reduced = result.reducer(result.initialState, {
-      type: 'UPDATE_HELLO_SUCCEED',
-      movieId: 3,
-      resource: {
-        movieId: 3,
-        name: 'please'
-      }
-    });
-
-    expect(reduced).to.deep.equal({
+  it('should handle `UPDATE_RESOURCE_SUCCEED` with `replace: false`', () => {
+    const reducer = resourceReducer('hellos', {
       resources: [
-        {movieId: 1},
-        {movieId: 3, name: 'please'},
-        {movieId: 4},
-      ],
-      resourceMeta: {
-        3: {
-          updateXhrStatus: xhrStatuses.SUCCEEDED
-        }
-      },
-      resourceListMeta: {
-        readXhrStatus: xhrStatuses.NULL,
-        createXhrStatus: xhrStatuses.NULL
-      }
-    });
-  });
-
-  it('should handle `UPDATE_HELLO_SUCCEED` with `replace: false`', () => {
-    const result = simpleResource('hello', {
-      initialState: {
-        resources: [
-          {id: 1},
-          {id: 3, last_name: 'please'},
-          {id: 4},
-        ]
-      }
+        {id: 1},
+        {id: 3, last_name: 'please'},
+        {id: 4},
+      ]
     });
 
-    const reduced = result.reducer(result.initialState, {
-      type: 'UPDATE_HELLO_SUCCEED',
+    const reduced = reducer(undefined, {
+      type: 'UPDATE_RESOURCE_SUCCEED',
+      resourceName: 'hellos',
       id: 3,
       replace: false,
       resource: {
@@ -241,14 +167,15 @@ describe('reducers: update', function() {
         {id: 3, name: 'please', last_name: 'please'},
         {id: 4},
       ],
-      resourceMeta: {
+      meta: {
         3: {
-          updateXhrStatus: xhrStatuses.SUCCEEDED
+          updateStatus: requestStatuses.SUCCEEDED
         }
       },
-      resourceListMeta: {
-        readXhrStatus: xhrStatuses.NULL,
-        createXhrStatus: xhrStatuses.NULL
+      listMeta: {
+        readStatus: requestStatuses.NULL,
+        createManyStatus: requestStatuses.NULL,
+        createStatus: requestStatuses.NULL
       }
     });
   });

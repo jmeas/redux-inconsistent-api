@@ -1,66 +1,19 @@
-import generateReducer from './generate-reducer';
-import generateActionTypes from './generate-action-types';
-import {
-  generateDefaultInitialState, snakeCase, xhrStatuses, updateResourceMeta,
-  updateManyResourceMetas, upsertResource, upsertManyResources
-} from './utils';
-
-const supportAllActions = {
-  create: true,
-  read: true,
-  readMany: true,
-  update: true,
-  del: true
-};
-
-// Create a resource.
-//
-// `resourceName`: a singular name for your resource. For instance, "book".
-// `options`: configure this resource. Refer to the API documentation for
-//   all of the supported options.
-function createResource(resourceName, options = {}) {
-  const {initialState = {}, idAttribute, actionReducers, pluralForm, supportedActions} = options;
-  const defaultInitialState = generateDefaultInitialState();
-  const initial = {
-    ...defaultInitialState,
-    ...initialState,
-    resourceListMeta: {
-      ...defaultInitialState.resourceListMeta,
-      ...initialState.resourceListMeta
-    }
-  };
-  const idAttr = idAttribute || 'id';
-  const reducers = actionReducers || [];
-  const snakeCaseName = snakeCase(resourceName);
-  const pluralName = pluralForm ? pluralForm : `${resourceName}s`;
-  const snakeCasePluralName = snakeCase(pluralName);
-  const supportedCrudActions = {
-    ...supportAllActions,
-    ...supportedActions
-  };
-
-  const mappedReducers = reducers.reduce((memo, actionReducer) => {
-    memo[actionReducer.actionType] = actionReducer.reducer;
-    return memo;
-  }, {});
-
-  const types = generateActionTypes(snakeCaseName, snakeCasePluralName, supportedCrudActions, Object.keys(mappedReducers));
-  return {
-    actionTypes: types,
-    initialState: initial,
-    reducer: generateReducer({
-      pluralForm: snakeCasePluralName,
-      supportedActions: supportedCrudActions,
-      initialState: initial,
-      actionReducers: mappedReducers,
-      idAttr, types, resourceName
-    }),
-    pluralForm: pluralName
-  };
-}
+import resourceReducer from './resource-reducer';
+import actionTypes from './action-types';
+import requestStatuses from './utils/request-statuses';
+import updateResourceMeta from './utils/update-resource-meta';
+import updateManyResourceMetas from './utils/update-many-resource-metas';
+import upsertResource from './utils/upsert-resource';
+import upsertManyResources from './utils/upsert-many-resources';
+import getStatus from './utils/get-status';
 
 export {
-  xhrStatuses, updateResourceMeta, updateManyResourceMetas, upsertResource,
-  upsertManyResources
+  resourceReducer,
+  actionTypes,
+  requestStatuses,
+  updateResourceMeta,
+  updateManyResourceMetas,
+  upsertResource,
+  upsertManyResources,
+  getStatus
 };
-export default createResource;
